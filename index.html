@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aznur Engineering Studio — a private, browser-local engineering toolbox covering mechanics, structures, fluids, thermodynamics, heat transfer, electrical engineering, construction, manufacturing and engineering economics.">
+  <meta name="theme-color" content="#fafafa">
+  <title>Aznur Engineering Studio</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --surface-2: #f5f5f4;
+      --border: #e7e5e4;
+      --text: #1c1917;
+      --muted: #57534e;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --success: #10b981;
+      --error: #ef4444;
+      --info: #3b82f6;
+      --warning-bg: #fffbeb;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    button, input, select { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .container {
+      width: min(1260px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+
+    header { text-align: center; margin-bottom: 22px; }
+    h1 { font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1.1; margin-bottom: 8px; }
+    h2 { font-size: 1.35rem; margin-bottom: 6px; }
+    h3 { font-size: 1.05rem; }
+    h4 { font-size: .82rem; }
+    .subtitle { max-width: 820px; margin: 0 auto; color: var(--muted); }
+
+    .toolbar, .row, .lr { display: flex; align-items: center; }
+    .toolbar { gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .row { gap: 9px; flex-wrap: wrap; }
+    .lr { justify-content: space-between; gap: 10px; }
+
+    .card {
+      padding: 20px;
+      margin-bottom: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .toolbar .search {
+      flex: 1 1 260px;
+      min-width: 220px;
+    }
+
+    .search input, input, select {
+      width: 100%;
+      padding: 9px 11px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .btn {
+      padding: 9px 15px;
+      background: var(--text);
+      color: #fff;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { background: #333; }
+    .btn.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: var(--surface-2); }
+    .btn.accent { background: var(--accent); }
+    .btn.accent:hover { background: var(--accent-hover); }
+    .btn.sm { padding: 6px 10px; font-size: .8rem; }
+
+    .tabs {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+      margin-bottom: 2px;
+      scrollbar-width: thin;
+    }
+    .tab { flex: 0 0 auto; }
+    .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .hero-grid, .tool-grid, .mini-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .hero-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+    .tool-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .mini-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+    .hero-item {
+      padding: 15px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .hero-item b { display: block; margin-bottom: 4px; }
+    .note { color: var(--muted); font-size: .78rem; }
+
+    .tool-card {
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .tool-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .tool-title { font-weight: 700; }
+    .tool-desc { color: var(--muted); font-size: .8rem; margin-top: 2px; }
+    .star { background: transparent; color: var(--muted); cursor: pointer; font-size: 1.1rem; }
+    .star.active { color: var(--accent); }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      color: var(--muted);
+      font-size: .71rem;
+      font-weight: 700;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+    .field .hint { color: var(--muted); font-size: .7rem; }
+
+    .result-box {
+      margin-top: 13px;
+      padding: 12px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+    }
+    .result-main { font-size: 1.25rem; font-weight: 800; }
+    .result-list { display: grid; gap: 5px; margin-top: 7px; }
+    .result-line { display: flex; justify-content: space-between; gap: 10px; font-size: .82rem; }
+    .result-line span:first-child { color: var(--muted); }
+    .formula {
+      margin-top: 9px;
+      padding: 9px 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .74rem;
+      overflow-x: auto;
+    }
+
+    .section-title {
+      margin: 4px 0 10px;
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .reference-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    .reference-table th, .reference-table td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .reference-table th { color: var(--muted); font-size: .7rem; text-transform: uppercase; }
+
+    .empty {
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .disclaimer {
+      margin-top: 20px;
+      padding: 13px 15px;
+      background: var(--warning-bg);
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+      color: #713f12;
+      font-size: .8rem;
+    }
+
+    #toasts {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: min(360px, calc(100vw - 32px));
+    }
+    .toast {
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--success);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px #0002;
+    }
+    .toast.err { border-left-color: var(--error); }
+
+    footer {
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .78rem;
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      .container { width: min(100% - 20px, 1260px); }
+      .field-grid { grid-template-columns: 1fr; }
+      .tool-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="toasts"></div>
+  <main class="container">
+    <header>
+      <h1>Aznur Engineering Studio</h1>
+      <p class="subtitle">
+        A private, browser-local engineering toolbox for calculations, estimation,
+        design checks, unit work, formulas, technical reference and everyday engineering decisions.
+      </p>
+    </header>
+
+    <section class="card">
+      <div class="hero-grid">
+        <div class="hero-item"><b>Mechanics</b><span class="note">Forces, motion, torque, gears, shafts, springs, energy.</span></div>
+        <div class="hero-item"><b>Structures</b><span class="note">Stress, strain, beams, deflection, buckling, sections.</span></div>
+        <div class="hero-item"><b>Fluids & Thermal</b><span class="note">Bernoulli, Reynolds, pipe losses, heat, gases, heat exchangers.</span></div>
+        <div class="hero-item"><b>Electrical</b><span class="note">Power, cables, motors, transformers, batteries, PF correction.</span></div>
+        <div class="hero-item"><b>Construction</b><span class="note">Concrete, rebar, masonry, plaster, paint, excavation, stairs.</span></div>
+        <div class="hero-item"><b>Manufacturing</b><span class="note">RPM, cutting speed, feed, MRR, machining time and sheet metal.</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="toolbar">
+        <div class="search">
+          <input id="search" type="search" placeholder="Search: beam, cable, pump, concrete, RPM, battery…">
+        </div>
+        <button class="btn secondary" id="favoritesOnly">☆ Favorites</button>
+        <button class="btn secondary" id="showAll">All Tools</button>
+        <button class="btn secondary" id="clearHistory">Clear History</button>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div id="toolCount" class="note" style="margin-bottom:12px"></div>
+      <div id="tools" class="tool-grid"></div>
+    </section>
+
+    <section class="card">
+      <h2>Engineering reference</h2>
+      <p class="note" style="margin-bottom:12px">
+        Core equations, constants, material values and assumptions used by this page.
+        Values are intentionally editable in calculators where a design-specific input is more appropriate.
+      </p>
+      <div class="mini-grid" style="margin-bottom:14px">
+        <div class="hero-item"><b>g₀</b><span class="note">9.80665 m/s² standard gravity</span></div>
+        <div class="hero-item"><b>ρ water</b><span class="note">≈ 1000 kg/m³ near room temperature</span></div>
+        <div class="hero-item"><b>ρ steel</b><span class="note">≈ 7850 kg/m³</span></div>
+        <div class="hero-item"><b>ρ aluminium</b><span class="note">≈ 2700 kg/m³</span></div>
+        <div class="hero-item"><b>c water</b><span class="note">≈ 4186 J/(kg·K)</span></div>
+        <div class="hero-item"><b>R gas</b><span class="note">8.314462618 J/(mol·K)</span></div>
+      </div>
+      <div class="section-title">Common formulas</div>
+      <table class="reference-table">
+        <thead><tr><th>Area</th><th>Formula</th><th>Use</th></tr></thead>
+        <tbody id="formulaTable"></tbody>
+      </table>
+      <div class="disclaimer">
+        <b>Engineering-use notice:</b> results are educational and preliminary-design aids, not certification of code compliance.
+        Structural, electrical, pressure, lifting, fire-safety and other safety-critical designs must be checked against the applicable
+        local code, manufacturer data, site conditions, material grades, load combinations and a qualified engineer's review.
+      </div>
+    </section>
+
+    <footer>
+      <p>Aznur Engineering Studio · No account · No external JavaScript · Calculations run locally in your browser.</p>
+      <p style="margin-top:4px">Built around SI-first engineering relationships and transparent formulas. NIST provides the SI framework and conversion guidance used as the numerical reference backbone.</p>
+    </footer>
+  </main>
+
+<script>
+(() => {
+  "use strict";
+
+  const PI = Math.PI;
+  const G = 9.80665;
+  const Rgas = 8.314462618;
+  const SIGMA = 5.670374419e-8;
+
+  const state = {
+    category: "All",
+    query: "",
+    favoritesOnly: false,
+    favorites: new Set(JSON.parse(localStorage.getItem("aznur-eng-favs") || "[]")),
+    history: JSON.parse(localStorage.getItem("aznur-eng-history") || "[]")
+  };
+
+  const $ = id => document.getElementById(id);
+  const n = (id, fallback = 0) => {
+    const value = Number($(id)?.value);
+    return Number.isFinite(value) ? value : fallback;
+  };
+  const safe = value => Number.isFinite(value) ? value : 0;
+  const fmt = (value, digits = 5) => {
+    if (!Number.isFinite(value)) return "—";
+    const abs = Math.abs(value);
+    if (abs !== 0 && (abs >= 1e6 || abs < 1e-4)) return value.toExponential(Math.min(8, digits));
+    return Number(value.toFixed(digits)).toLocaleString("en-US", { maximumFractionDigits: digits });
+  };
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+  function toast(message, type = "ok") {
+    const el = document.createElement("div");
+    el.className = `toast ${type === "err" ? "err" : ""}`;
+    el.textContent = message;
+    $("toasts").append(el);
+    setTimeout(() => el.remove(), 3500);
+  }
+
+  function remember(toolId, value) {
+    state.history = [{ toolId, value, time: new Date().toISOString() }, ...state.history.filter(x => x.toolId !== toolId)].slice(0, 20);
+    localStorage.setItem("aznur-eng-history", JSON.stringify(state.history));
+  }
+
+  function field(id, label, value = 0, unit = "", min = "", step = "any", hint = "") {
+    return { id, label, value, unit, min, step, hint };
+  }
+
+  function tool(id, category, title, desc, fields, calc, formula = "") {
+    return { id, category, title, desc, fields, calc, formula };
+  }
+
+  const T = [];
+
+  // -------------------------------------------------------------------------
+  // Fundamental / general engineering math
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("ohms", "Fundamentals", "Ohm's law", "Solve voltage, current, resistance and electrical power.", [
+      field("V", "Voltage", 230, "V", "0"), field("I", "Current", 5, "A", "0"), field("R", "Resistance", 46, "Ω", "0")
+    ], v => {
+      const V = v.V, I = v.I, R = v.R;
+      const P = V * I || I * I * R || (V * V) / R;
+      const values = [];
+      if (R > 0 && I > 0) values.push(["Voltage", I * R, "V"]);
+      if (R > 0 && V > 0) values.push(["Current", V / R, "A"]);
+      if (V > 0 && I > 0) values.push(["Resistance", V / I, "Ω"]);
+      if (P > 0) values.push(["Power", P, "W"]);
+      return { main: values[0]?.[1] || 0, mainUnit: values[0]?.[2] || "", lines: values, formula: "V = IR; P = VI = I²R = V²/R" };
+    }, "V = IR · P = VI = I²R = V²/R"),
+
+    tool("efficiency", "Fundamentals", "Efficiency & losses", "Find output, input and losses from efficiency.", [field("Pin", "Input power", 10, "kW", "0"), field("eta", "Efficiency", 90, "%", "0", "0.1")], v => {
+      const Pout = v.Pin * v.eta / 100;
+      return { main: Pout, mainUnit: "kW output", lines: [["Output", Pout, "kW"], ["Loss", v.Pin - Pout, "kW"], ["Efficiency", v.eta, "%"]], formula: "η = Pout/Pin · Loss = Pin − Pout" };
+    }, "η = Pout / Pin"),
+
+    tool("energy-cost", "Fundamentals", "Energy & electricity cost", "Convert load power and operating time into energy and cost.", [field("P", "Load", 2, "kW", "0"), field("hours", "Hours/day", 8, "h", "0"), field("days", "Days", 30, "day", "0"), field("tariff", "Energy price", 10, "BDT/kWh", "0", "0.01")], v => {
+      const e = v.P * v.hours * v.days;
+      return { main: e, mainUnit: "kWh/month", lines: [["Energy", e, "kWh"], ["Cost", e * v.tariff, "BDT/month"], ["Average daily energy", v.P * v.hours, "kWh/day"]], formula: "E = P·t · Cost = E·tariff" };
+    }, "E = P t"),
+
+    tool("frequency-period", "Fundamentals", "Frequency ↔ period", "Convert electrical/mechanical frequency to time period and angular frequency.", [field("f", "Frequency", 50, "Hz", "0")], v => {
+      const period = v.f > 0 ? 1 / v.f : 0;
+      return { main: period * 1000, mainUnit: "ms", lines: [["Period", period * 1000, "ms"], ["Angular frequency", 2 * PI * v.f, "rad/s"], ["Cycles/min", v.f * 60, "cycles/min"]], formula: "T = 1/f · ω = 2πf" };
+    }),
+
+    tool("rms", "Fundamentals", "AC RMS / peak", "Convert sinusoidal peak and RMS voltage/current.", [field("peak", "Peak value", 325.27, "V", "0")], v => ({
+      main: v.peak / Math.sqrt(2), mainUnit: "V RMS", lines: [["RMS", v.peak / Math.sqrt(2), "V"], ["Peak-to-peak", 2 * v.peak, "Vpp"], ["Average rectified sine", 2 * v.peak / PI, "V"]], formula: "Vrms = Vp/√2 for a sine wave"
+    })),
+
+    tool("db", "Fundamentals", "Decibel calculator", "Voltage ratio and power ratio in dB.", [field("ratio", "Power ratio", 10, "P2/P1", "0")], v => ({
+      main: v.ratio > 0 ? 10 * Math.log10(v.ratio) : 0,
+      mainUnit: "dB power",
+      lines: [["Power dB", v.ratio > 0 ? 10 * Math.log10(v.ratio) : 0, "dB"], ["Equivalent voltage ratio", v.ratio > 0 ? Math.sqrt(v.ratio) : 0, "V2/V1"], ["Voltage dB", v.ratio > 0 ? 20 * Math.log10(Math.sqrt(v.ratio)) : 0, "dB"]],
+      formula: "dBpower = 10 log10(P2/P1) · dBvoltage = 20 log10(V2/V1)"
+    })),
+
+    tool("ratio", "Fundamentals", "Engineering ratio / scale", "Scale a quantity by a ratio, percentage or safety factor.", [field("x", "Base value", 100, "", "0"), field("ratio", "Ratio", 1.25, "×", "0"), field("sf", "Safety factor", 1.5, "×", "0")], v => ({
+      main: v.x * v.ratio * v.sf, mainUnit: "result", lines: [["Scaled", v.x * v.ratio, ""], ["With safety factor", v.x * v.ratio * v.sf, ""]], formula: "Result = Base × Ratio × SF"
+    })),
+
+    tool("engineering-notation", "Fundamentals", "Engineering notation", "Convert a number into engineering notation with SI prefixes.", [field("x", "Number", 1234567, "", "")], v => {
+      const x = v.x; const powers = [-12, -9, -6, -3, 0, 3, 6, 9, 12];
+      const p = x === 0 ? 0 : clamp(Math.floor(Math.log10(Math.abs(x)) / 3) * 3, -12, 12);
+      return { main: p, mainUnit: "power of 10", lines: [["Mantissa", x / (10 ** p), ""], ["Engineering exponent", p, ""], ["Reconstruction", x / (10 ** p) + " × 10^" + p, ""]], formula: "x = m × 10^(3n), 1 ≤ |m| < 1000" };
+    }),
+
+    tool("triangle", "Fundamentals", "Right triangle", "Find the missing side or angle of a right triangle.", [field("a", "Side a", 3, "", "0"), field("b", "Side b", 4, "", "0")], v => {
+      const c = Math.hypot(v.a, v.b);
+      return { main: c, mainUnit: "hypotenuse", lines: [["Hypotenuse c", c, ""], ["Angle A", Math.atan2(v.b, v.a) * 180 / PI, "°"], ["Area", 0.5 * v.a * v.b, "square units"]], formula: "c = √(a²+b²)"
+    }}),
+
+    tool("sphere", "Geometry", "Sphere geometry", "Volume, surface area and mass from diameter and density.", [field("d", "Diameter", 1, "m", "0"), field("rho", "Density", 1000, "kg/m³", "0")], v => {
+      const r = v.d / 2, V = 4 / 3 * PI * r ** 3, A = 4 * PI * r ** 2;
+      return { main: V, mainUnit: "m³", lines: [["Volume", V, "m³"], ["Surface area", A, "m²"], ["Mass", V * v.rho, "kg"]], formula: "V = 4πr³/3 · A = 4πr²"
+    }}),
+
+    tool("cylinder", "Geometry", "Cylinder geometry", "Volume and surface areas; useful for tanks, pipes and rollers.", [field("d", "Diameter", 1, "m", "0"), field("h", "Height", 2, "m", "0"), field("rho", "Density", 1000, "kg/m³", "0")], v => {
+      const r = v.d / 2, V = PI * r ** 2 * v.h, curved = 2 * PI * r * v.h, total = curved + 2 * PI * r ** 2;
+      return { main: V, mainUnit: "m³", lines: [["Volume", V, "m³"], ["Curved area", curved, "m²"], ["Total surface", total, "m²"], ["Mass", V * v.rho, "kg"]], formula: "V = πr²h"
+    }})
+  );
+
+  // -------------------------------------------------------------------------
+  // Mechanics
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("newton2", "Mechanics", "Force / mass / acceleration", "Solve Newton's second law.", [field("m", "Mass", 100, "kg", "0"), field("a", "Acceleration", 2, "m/s²", "0")], v => ({
+      main: v.m * v.a, mainUnit: "N", lines: [["Force", v.m * v.a, "N"], ["Force", v.m * v.a / 1000, "kN"]], formula: "F = ma"
+    })),
+
+    tool("weight", "Mechanics", "Weight / gravitational force", "Calculate weight from mass and local gravitational acceleration.", [field("m", "Mass", 100, "kg", "0"), field("g", "Gravity", G, "m/s²", "0", "0.00001")], v => ({
+      main: v.m * v.g, mainUnit: "N", lines: [["Weight", v.m * v.g, "N"], ["Weight", v.m * v.g / 1000, "kN"]], formula: "W = mg"
+    })),
+
+    tool("work", "Mechanics", "Work / energy from force", "Calculate work for a constant force at a given distance and angle.", [field("F", "Force", 100, "N", "0"), field("s", "Distance", 5, "m", "0"), field("theta", "Angle", 0, "°", "-360", "0.1")], v => ({
+      main: v.F * v.s * Math.cos(v.theta * PI / 180), mainUnit: "J", lines: [["Work", v.F * v.s * Math.cos(v.theta * PI / 180), "J"], ["Work", v.F * v.s * Math.cos(v.theta * PI / 180) / 1000, "kJ"]], formula: "W = Fs cosθ"
+    })),
+
+    tool("kinetic", "Mechanics", "Kinetic energy / momentum", "Find kinetic energy and linear momentum.", [field("m", "Mass", 100, "kg", "0"), field("v", "Velocity", 10, "m/s", "0")], v => ({
+      main: 0.5 * v.m * v.v ** 2, mainUnit: "J", lines: [["Kinetic energy", 0.5 * v.m * v.v ** 2, "J"], ["Momentum", v.m * v.v, "kg·m/s"]], formula: "KE = ½mv² · p = mv"
+    })),
+
+    tool("potential", "Mechanics", "Potential energy", "Gravitational potential energy and equivalent lift work.", [field("m", "Mass", 100, "kg", "0"), field("h", "Height", 10, "m", "0"), field("g", "Gravity", G, "m/s²", "0")], v => ({
+      main: v.m * v.g * v.h, mainUnit: "J", lines: [["Potential energy", v.m * v.g * v.h, "J"], ["kWh", v.m * v.g * v.h / 3600000, "kWh"]], formula: "PE = mgh"
+    })),
+
+    tool("power-mech", "Mechanics", "Mechanical power", "Average power from work and time, or force and velocity.", [field("F", "Force", 1000, "N", "0"), field("v", "Velocity", 2, "m/s", "0"), field("eta", "Efficiency", 100, "%", "0", "0.1")], v => ({
+      main: v.F * v.v * v.eta / 100, mainUnit: "W", lines: [["Mechanical output", v.F * v.v, "W"], ["With efficiency", v.F * v.v * v.eta / 100, "W"], ["With efficiency", v.F * v.v * v.eta / 1000, "kW"]], formula: "P = Fv · Pout = Pinη"
+    })),
+
+    tool("torque", "Mechanics", "Torque", "Torque from force and lever arm.", [field("F", "Force", 100, "N", "0"), field("r", "Lever arm", 0.5, "m", "0"), field("theta", "Included angle", 90, "°", "-360", "0.1")], v => ({
+      main: v.F * v.r * Math.sin(v.theta * PI / 180), mainUnit: "N·m", lines: [["Torque", v.F * v.r * Math.sin(v.theta * PI / 180), "N·m"], ["Power at 1500 rpm", v.F * v.r * Math.sin(v.theta * PI / 180) * 2 * PI * 1500 / 60 / 1000, "kW"]], formula: "τ = Fr sinθ · P = τω"
+    })),
+
+    tool("shaft-power", "Mechanics", "Shaft power / torque / RPM", "Convert torque and rotational speed to shaft power.", [field("Tq", "Torque", 50, "N·m", "0"), field("rpm", "Speed", 1500, "rpm", "0")], v => {
+      const w = 2 * PI * v.rpm / 60, P = v.Tq * w;
+      return { main: P / 1000, mainUnit: "kW", lines: [["Angular speed", w, "rad/s"], ["Shaft power", P, "W"], ["Shaft power", P / 1000, "kW"], ["Horsepower", P / 745.699872, "hp"]], formula: "ω = 2πn/60 · P = Tω"
+    }}),
+
+    tool("centripetal", "Mechanics", "Centripetal motion", "Acceleration and force for circular motion.", [field("m", "Mass", 10, "kg", "0"), field("r", "Radius", 2, "m", "0"), field("v", "Speed", 5, "m/s", "0")], v => {
+      const a = v.r > 0 ? v.v ** 2 / v.r : 0;
+      return { main: a, mainUnit: "m/s²", lines: [["Centripetal acceleration", a, "m/s²"], ["Centripetal force", v.m * a, "N"], ["Angular speed", v.r > 0 ? v.v / v.r : 0, "rad/s"]], formula: "aᶜ = v²/r · Fᶜ = mv²/r"
+    }}),
+
+    tool("friction", "Mechanics", "Friction / incline", "Normal force and limiting friction on an inclined plane.", [field("m", "Mass", 100, "kg", "0"), field("angle", "Slope angle", 15, "°", "0", "0.1"), field("mu", "Friction coefficient", 0.3, "μ", "0", "0.01")], v => {
+      const a = G * (Math.sin(v.angle * PI / 180) - v.mu * Math.cos(v.angle * PI / 180));
+      const N = v.m * G * Math.cos(v.angle * PI / 180);
+      const friction = v.mu * N;
+      return { main: a, mainUnit: "m/s² down-slope", lines: [["Normal force", N, "N"], ["Friction limit", friction, "N"], ["Ideal slope force", v.m * G * Math.sin(v.angle * PI / 180), "N"], ["Net acceleration if sliding", a, "m/s²"]], formula: "N = mg cosθ · Ff = μN · a = g(sinθ − μcosθ)" };
+    }),
+
+    tool("spring", "Mechanics", "Spring force / energy", "Hooke's law, stiffness and stored elastic energy.", [field("k", "Spring rate", 1000, "N/m", "0"), field("x", "Deflection", 0.05, "m", "0")], v => ({
+      main: v.k * v.x, mainUnit: "N", lines: [["Spring force", v.k * v.x, "N"], ["Stored energy", 0.5 * v.k * v.x ** 2, "J"]], formula: "F = kx · E = ½kx²"
+    })),
+
+    tool("gear", "Mechanics", "Gear ratio", "Find driven speed, torque and ideal ratio.", [field("driver", "Driver teeth", 20, "teeth", "1"), field("driven", "Driven teeth", 40, "teeth", "1"), field("rpm", "Driver speed", 1500, "rpm", "0"), field("torque", "Driver torque", 10, "N·m", "0")], v => {
+      const ratio = v.driven / v.driver;
+      return { main: v.rpm / ratio, mainUnit: "driven rpm", lines: [["Ratio", ratio, "×"], ["Driven speed", v.rpm / ratio, "rpm"], ["Ideal driven torque", v.torque * ratio, "N·m"], ["Ideal output power", v.torque * 2 * PI * v.rpm / 60, "W"]], formula: "ratio = Z₂/Z₁ · n₂ = n₁/ratio · T₂ ≈ T₁·ratio" };
+    }),
+
+    tool("belt", "Mechanics", "Pulley / belt speed", "Calculate belt speed and driven RPM from pulley diameters.", [field("D1", "Driver diameter", 0.2, "m", "0"), field("D2", "Driven diameter", 0.4, "m", "0"), field("rpm", "Driver RPM", 1500, "rpm", "0")], v => {
+      const belt = PI * v.D1 * v.rpm / 60;
+      return { main: belt, mainUnit: "m/s belt speed", lines: [["Belt speed", belt, "m/s"], ["Driven RPM", v.D2 > 0 ? v.D1 * v.rpm / v.D2 : 0, "rpm"]], formula: "v = πD₁n₁/60 · D₁n₁ = D₂n₂ (ideal)" };
+    }),
+
+    tool("angular-motion", "Mechanics", "Angular motion", "Find final speed and angle for constant angular acceleration.", [field("w0", "Initial ω", 0, "rad/s", ""), field("alpha", "Angular acceleration", 5, "rad/s²", ""), field("t", "Time", 4, "s", "0")], v => ({
+      main: v.w0 + v.alpha * v.t, mainUnit: "rad/s", lines: [["Final ω", v.w0 + v.alpha * v.t, "rad/s"], ["Angular displacement", v.w0 * v.t + 0.5 * v.alpha * v.t ** 2, "rad"], ["Revolutions", (v.w0 * v.t + 0.5 * v.alpha * v.t ** 2) / (2 * PI), "rev"]], formula: "ω = ω₀ + αt · θ = ω₀t + ½αt²" })),
+
+    tool("projectile", "Mechanics", "Projectile motion", "Ideal projectile range, time and height with no air drag.", [field("v0", "Initial speed", 20, "m/s", "0"), field("angle", "Launch angle", 45, "°", "0", "0.1"), field("h0", "Initial height", 0, "m", "0")], v => {
+      const a = v.angle * PI / 180;
+      const t = (v.v0 * Math.sin(a) + Math.sqrt((v.v0 * Math.sin(a)) ** 2 + 2 * G * v.h0)) / G;
+      const range = v.v0 * Math.cos(a) * t;
+      const maxH = v.h0 + (v.v0 * Math.sin(a)) ** 2 / (2 * G);
+      return { main: range, mainUnit: "m range", lines: [["Flight time", t, "s"], ["Range", range, "m"], ["Maximum height", maxH, "m"]], formula: "x = v₀ cosθ·t · y = h₀ + v₀sinθ·t − gt²/2" };
+    }),
+
+    tool("braking", "Mechanics", "Braking distance", "Ideal friction-limited stopping distance on a level surface.", [field("v", "Initial speed", 20, "m/s", "0"), field("mu", "Friction coefficient", 0.7, "μ", "0", "0.01"), field("reaction", "Reaction time", 1, "s", "0", "0.01")], v => {
+      const a = Math.max(0.01, v.mu * G);
+      const brake = v.v ** 2 / (2 * a), reaction = v.v * v.reaction;
+      return { main: brake + reaction, mainUnit: "m total stopping distance", lines: [["Braking distance", brake, "m"], ["Reaction distance", reaction, "m"], ["Average deceleration", a, "m/s²"]], formula: "dbrake = v²/(2μg) · dreaction = vt" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Statics / structures / materials
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("stress", "Structures", "Normal stress / strain", "Axial stress, strain and extension of a prismatic member.", [field("F", "Axial force", 10000, "N", "0"), field("A", "Area", 100, "mm²", "0"), field("E", "Young's modulus", 200000, "MPa", "0"), field("L", "Original length", 1000, "mm", "0")], v => {
+      const s = v.A > 0 ? v.F / v.A : 0;
+      const strain = v.E > 0 ? s / v.E : 0;
+      return { main: s, mainUnit: "MPa", lines: [["Stress", s, "MPa"], ["Strain", strain, "mm/mm"], ["Extension", strain * v.L, "mm"], ["Elastic force reserve at 250 MPa", v.A * 250, "N"]], formula: "σ = F/A · ε = σ/E · ΔL = εL" };
+    }),
+
+    tool("bending", "Structures", "Bending stress", "Calculate extreme-fiber bending stress from moment and section modulus.", [field("M", "Bending moment", 10, "kN·m", "0"), field("Z", "Section modulus", 100000, "mm³", "0")], v => {
+      const s = v.Z > 0 ? (v.M * 1e6) / v.Z : 0;
+      return { main: s, mainUnit: "MPa", lines: [["Bending stress", s, "MPa"], ["Allowable moment at 150 MPa", v.Z * 150 / 1e6, "kN·m"]], formula: "σ = M/Z" };
+    }),
+
+    tool("shear-stress", "Structures", "Shear stress", "Average shear stress; suitable for quick preliminary checks.", [field("V", "Shear force", 20, "kN", "0"), field("A", "Shear area", 500, "mm²", "0")], v => {
+      const s = v.A > 0 ? (v.V * 1000) / v.A : 0;
+      return { main: s, mainUnit: "MPa", lines: [["Average shear stress", s, "MPa"]], formula: "τavg = V/A" };
+    }),
+
+    tool("thermal-expansion", "Structures", "Thermal expansion", "Length and thermal strain from a temperature change.", [field("L", "Original length", 5, "m", "0"), field("alpha", "Thermal expansion coefficient", 12e-6, "1/K", "0", "1e-7"), field("dT", "Temperature change", 50, "K", "")], v => {
+      const dL = v.L * v.alpha * v.dT;
+      return { main: dL * 1000, mainUnit: "mm expansion", lines: [["Thermal strain", v.alpha * v.dT, "mm/mm"], ["Expansion", dL * 1000, "mm"], ["Final length", v.L + dL, "m"]], formula: "ΔL = αLΔT" };
+    }),
+
+    tool("euler", "Structures", "Euler column buckling", "Ideal elastic buckling load for a slender pin-ended column with effective-length factor.", [field("E", "Young's modulus", 200000, "MPa", "0"), field("I", "Second moment", 8e6, "mm⁴", "0"), field("L", "Length", 3000, "mm", "0"), field("K", "Effective-length factor", 1, "", "0")], v => {
+      const P = Math.PI ** 2 * v.E * v.I / (v.K * v.L) ** 2;
+      return { main: P / 1000, mainUnit: "kN", lines: [["Critical load", P / 1000, "kN"], ["Elastic buckling stress if area known", "Use σcr = π²E/(KL/r)²", ""]], formula: "Pcr = π²EI/(KL)²" };
+    }),
+
+    tool("rect-section", "Structures", "Rectangular section properties", "Area, centroidal second moment, section modulus and radius of gyration.", [field("b", "Width", 100, "mm", "0"), field("h", "Height", 200, "mm", "0")], v => {
+      const A = v.b * v.h;
+      const I = v.b * v.h ** 3 / 12;
+      const Z = I / (v.h / 2);
+      const r = Math.sqrt(I / A);
+      return { main: A, mainUnit: "mm² area", lines: [["Area", A, "mm²"], ["Second moment Ix", I, "mm⁴"], ["Section modulus Zx", Z, "mm³"], ["Radius of gyration rx", r, "mm"]], formula: "A=bh · Ix=bh³/12 · Z=Ix/(h/2)" };
+    }),
+
+    tool("circle-section", "Structures", "Circular section properties", "Solid-round area and section properties.", [field("d", "Diameter", 50, "mm", "0")], v => {
+      const A = PI * v.d ** 2 / 4, I = PI * v.d ** 4 / 64, Z = I / (v.d / 2), r = v.d / 4;
+      return { main: A, mainUnit: "mm² area", lines: [["Area", A, "mm²"], ["Second moment", I, "mm⁴"], ["Section modulus", Z, "mm³"], ["Radius of gyration", r, "mm"]], formula: "A=πd²/4 · I=πd⁴/64 · Z=I/(d/2)" };
+    }),
+
+    tool("beam-reaction", "Structures", "Simply supported beam · center load", "Reactions and maximum moment for a central point load.", [field("P", "Point load", 10, "kN", "0"), field("L", "Span", 5, "m", "0")], v => ({
+      main: v.P / 2, mainUnit: "kN reaction each", lines: [["Left reaction", v.P / 2, "kN"], ["Right reaction", v.P / 2, "kN"], ["Maximum moment", v.P * v.L / 4, "kN·m"]], formula: "RA = RB = P/2 · Mmax = PL/4"
+    })),
+
+    tool("beam-udl", "Structures", "Simply supported beam · UDL", "Reactions and maximum moment under a full-span uniformly distributed load.", [field("w", "UDL", 5, "kN/m", "0"), field("L", "Span", 5, "m", "0")], v => ({
+      main: v.w * v.L / 2, mainUnit: "kN reaction each", lines: [["Total load", v.w * v.L, "kN"], ["Each support reaction", v.w * v.L / 2, "kN"], ["Maximum moment", v.w * v.L ** 2 / 8, "kN·m"]], formula: "R = wL/2 · Mmax = wL²/8"
+    })),
+
+    tool("cantilever", "Structures", "Cantilever · tip load", "Maximum moment and end deflection for a cantilever with a point load at the free end.", [field("P", "Tip load", 1, "kN", "0"), field("L", "Length", 2, "m", "0"), field("E", "Young's modulus", 200, "GPa", "0"), field("I", "Second moment", 5e-6, "m⁴", "0")], v => {
+      const M = v.P * v.L, d = (v.P * 1000 * v.L ** 3) / (3 * v.E * 1e9 * v.I);
+      return { main: M, mainUnit: "kN·m moment", lines: [["Fixed-end moment", M, "kN·m"], ["Free-end deflection", d * 1000, "mm"]], formula: "M = PL · δ = PL³/(3EI)" };
+    }),
+
+    tool("uniform-beam-deflection", "Structures", "Simply supported beam · center-load deflection", "Center deflection for a simply supported beam under a center point load.", [field("P", "Center load", 1, "kN", "0"), field("L", "Span", 2, "m", "0"), field("E", "Young's modulus", 200, "GPa", "0"), field("I", "Second moment", 5e-6, "m⁴", "0")], v => {
+      const d = (v.P * 1000 * v.L ** 3) / (48 * v.E * 1e9 * v.I);
+      return { main: d * 1000, mainUnit: "mm deflection", lines: [["Center deflection", d * 1000, "mm"]], formula: "δmax = PL³/(48EI)" };
+    }),
+
+    tool("factor-safety", "Structures", "Factor of safety", "Relate failure strength to working stress/load.", [field("strength", "Failure / yield strength", 250, "MPa", "0"), field("working", "Working stress", 125, "MPa", "0")], v => ({
+      main: v.working > 0 ? v.strength / v.working : 0, mainUnit: "× safety factor", lines: [["Factor of safety", v.working > 0 ? v.strength / v.working : 0, "×"], ["Working stress at FoS 2", v.strength / 2, "MPa"]], formula: "FoS = Strength / Working stress" })),
+
+    tool("density", "Materials", "Density / mass / volume", "Convert between density, mass and volume.", [field("rho", "Density", 7850, "kg/m³", "0"), field("mass", "Mass", 10, "kg", "0"), field("V", "Volume", 0.001, "m³", "0")], v => {
+      const mass = v.mass || v.rho * v.V;
+      const volume = mass / v.rho;
+      return { main: volume, mainUnit: "m³", lines: [["Mass from ρV", v.rho * v.V, "kg"], ["Volume from m/ρ", volume, "m³"], ["Density", v.rho, "kg/m³"]], formula: "ρ = m/V" };
+    }),
+
+    tool("mass-steel", "Materials", "Steel plate / bar weight", "Quick mass estimate from density and dimensions.", [field("L", "Length", 2, "m", "0"), field("b", "Width", 1, "m", "0"), field("t", "Thickness", 10, "mm", "0"), field("rho", "Density", 7850, "kg/m³", "0")], v => {
+      const V = v.L * v.b * v.t / 1000;
+      return { main: V * v.rho, mainUnit: "kg", lines: [["Volume", V, "m³"], ["Mass", V * v.rho, "kg"], ["Mass", V * v.rho / 1000, "tonne"]], formula: "V = Lbt · m = ρV" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Fluids
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("pressure", "Fluids", "Pressure / force / area", "Convert force over area to pressure and bar/psi.", [field("F", "Force", 10000, "N", "0"), field("A", "Area", 0.01, "m²", "0")], v => {
+      const p = v.A > 0 ? v.F / v.A : 0;
+      return { main: p, mainUnit: "Pa", lines: [["Pressure", p, "Pa"], ["Pressure", p / 1000, "kPa"], ["Pressure", p / 1e5, "bar"], ["Pressure", p / 6894.757293168, "psi"]], formula: "p = F/A" };
+    }),
+
+    tool("head-pressure", "Fluids", "Pressure ↔ head", "Convert fluid pressure to equivalent liquid column head.", [field("p", "Pressure", 100, "kPa", "0"), field("rho", "Fluid density", 1000, "kg/m³", "0")], v => {
+      const head = v.rho > 0 ? (v.p * 1000) / (v.rho * G) : 0;
+      return { main: head, mainUnit: "m head", lines: [["Head", head, "m"], ["Pressure", v.rho * G * head / 1000, "kPa"]], formula: "p = ρgh" };
+    }),
+
+    tool("bernoulli", "Fluids", "Bernoulli energy balance", "Compare pressure head, velocity head and elevation head at two points, neglecting losses.", [field("p1", "P1", 200, "kPa"), field("v1", "V1", 2, "m/s"), field("z1", "Z1", 5, "m"), field("v2", "V2", 4, "m/s"), field("z2", "Z2", 2, "m"), field("rho", "Density", 1000, "kg/m³")], v => {
+      const p2 = (v.p1 * 1000) + 0.5 * v.rho * (v.v1 ** 2 - v.v2 ** 2) + v.rho * G * (v.z1 - v.z2);
+      return { main: p2 / 1000, mainUnit: "kPa at point 2", lines: [["Pressure head P1/ρg", v.p1 * 1000 / (v.rho * G), "m"], ["Velocity-head change", (v.v1 ** 2 - v.v2 ** 2) / (2 * G), "m"], ["P2", p2 / 1000, "kPa"]], formula: "P/ρ + V²/2 + gz = constant" };
+    }),
+
+    tool("reynolds", "Fluids", "Reynolds number", "Classify flow using pipe diameter, velocity, density and viscosity.", [field("rho", "Density", 1000, "kg/m³", "0"), field("v", "Velocity", 1, "m/s", "0"), field("D", "Diameter", 0.05, "m", "0"), field("mu", "Dynamic viscosity", 0.001, "Pa·s", "0")], v => {
+      const Re = v.mu > 0 ? v.rho * v.v * v.D / v.mu : 0;
+      const type = Re < 2300 ? "Laminar" : Re < 4000 ? "Transitional" : "Turbulent";
+      return { main: Re, mainUnit: "Re", lines: [["Reynolds number", Re, ""], ["Regime", type, ""]], formula: "Re = ρVD/μ" };
+    }),
+
+    tool("pipe-flow", "Fluids", "Pipe flow / velocity", "Convert volumetric flow to pipe velocity.", [field("Q", "Flow", 10, "L/s", "0"), field("D", "Pipe ID", 50, "mm", "0")], v => {
+      const q = v.Q / 1000, D = v.D / 1000, area = PI * D ** 2 / 4, vel = area > 0 ? q / area : 0;
+      return { main: vel, mainUnit: "m/s", lines: [["Cross-sectional area", area * 1e6, "mm²"], ["Velocity", vel, "m/s"], ["Flow", q * 3600, "m³/h"]], formula: "Q = AV" };
+    }),
+
+    tool("darcy", "Fluids", "Darcy-Weisbach pipe loss", "Estimate friction head loss using the Darcy-Weisbach equation and Swamee-Jain friction factor.", [field("L", "Pipe length", 100, "m", "0"), field("D", "Pipe ID", 0.05, "m", "0"), field("v", "Velocity", 2, "m/s", "0"), field("eps", "Roughness", 0.000045, "m", "0"), field("rho", "Density", 1000, "kg/m³", "0"), field("mu", "Dynamic viscosity", 0.001, "Pa·s", "0")], v => {
+      const Re = v.mu > 0 ? v.rho * v.v * v.D / v.mu : 0;
+      const f = Re > 0 ? 0.25 / Math.pow(Math.log10(v.eps / (3.7 * v.D) + 5.74 / Math.pow(Re, 0.9)), 2) : 0;
+      const h = f * v.L / v.D * v.v ** 2 / (2 * G);
+      return { main: h, mainUnit: "m head loss", lines: [["Reynolds number", Re, ""], ["Darcy friction factor", f, ""], ["Head loss", h, "m"], ["Pressure loss", v.rho * G * h / 1000, "kPa"]], formula: "hf = f(L/D)V²/(2g)" };
+    }),
+
+    tool("pump-power", "Fluids", "Pump hydraulic power", "Estimate hydraulic and shaft power from flow, head and efficiency.", [field("Q", "Flow", 20, "L/s", "0"), field("H", "Total head", 30, "m", "0"), field("rho", "Density", 1000, "kg/m³", "0"), field("eta", "Pump efficiency", 70, "%", "0", "0.1")], v => {
+      const hyd = (v.Q / 1000) * v.rho * G * v.H;
+      return { main: hyd / 1000, mainUnit: "kW hydraulic", lines: [["Hydraulic power", hyd / 1000, "kW"], ["Input shaft power", hyd / (v.eta / 100), "W"], ["Input shaft power", hyd / (v.eta / 100) / 1000, "kW"]], formula: "P = ρgQH · Pshaft = Phyd/η" };
+    }),
+
+    tool("buoyancy", "Fluids", "Buoyancy force", "Archimedes' principle for displaced fluid volume.", [field("V", "Displaced volume", 0.05, "m³", "0"), field("rho", "Fluid density", 1000, "kg/m³", "0")], v => ({
+      main: v.rho * G * v.V, mainUnit: "N", lines: [["Buoyant force", v.rho * G * v.V, "N"], ["Equivalent mass", v.rho * v.V, "kg"]], formula: "Fb = ρgVdisplaced"
+    })),
+
+    tool("tank-fill", "Fluids", "Tank fill / drain time", "Time to fill or drain a tank from a constant volumetric flow.", [field("V", "Tank volume", 1000, "L", "0"), field("Q", "Flow", 20, "L/min", "0")], v => ({
+      main: v.Q > 0 ? v.V / v.Q : 0, mainUnit: "minutes", lines: [["Time", v.Q > 0 ? v.V / v.Q : 0, "min"], ["Time", v.Q > 0 ? v.V / v.Q / 60 : 0, "h"]], formula: "t = V/Q"
+    })),
+
+    tool("orifice", "Fluids", "Orifice flow", "Idealized sharp-edged orifice estimate using a discharge coefficient.", [field("Cd", "Discharge coefficient", 0.62, "", "0", "0.01"), field("A", "Orifice area", 0.0005, "m²", "0"), field("h", "Pressure head", 2, "m", "0"), field("rho", "Density", 1000, "kg/m³", "0")], v => {
+      const Q = v.Cd * v.A * Math.sqrt(2 * G * v.h);
+      return { main: Q * 1000, mainUnit: "L/s", lines: [["Flow", Q * 1000, "L/s"], ["Flow", Q * 3600, "m³/h"], ["Mass flow", Q * v.rho, "kg/s"]], formula: "Q = Cd A √(2gh)" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Thermodynamics & heat transfer
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("heat-sensible", "Thermal", "Sensible heat", "Heat required to change temperature without phase change.", [field("m", "Mass", 10, "kg", "0"), field("cp", "Specific heat", 4186, "J/kg·K", "0"), field("dT", "Temperature change", 20, "K", "")], v => ({
+      main: v.m * v.cp * v.dT / 1000, mainUnit: "kJ", lines: [["Heat", v.m * v.cp * v.dT / 1000, "kJ"], ["Energy", v.m * v.cp * v.dT / 3.6e6, "kWh"]], formula: "Q = mcΔT"
+    })),
+
+    tool("phase-change", "Thermal", "Latent heat / phase change", "Estimate heat for melting, freezing, boiling or condensing.", [field("m", "Mass", 10, "kg", "0"), field("Lh", "Latent heat", 2257000, "J/kg", "0")], v => ({
+      main: v.m * v.Lh / 1000, mainUnit: "kJ", lines: [["Latent energy", v.m * v.Lh / 1000, "kJ"], ["Energy", v.m * v.Lh / 3.6e6, "kWh"]], formula: "Q = mL"
+    })),
+
+    tool("ideal-gas", "Thermal", "Ideal gas law", "Find pressure, volume, amount or temperature using PV = nRT.", [field("P", "Pressure", 101325, "Pa", "0"), field("V", "Volume", 1, "m³", "0"), field("n", "Amount", 1, "mol", "0"), field("T", "Temperature", 298.15, "K", "0")], v => ({
+      main: v.n > 0 && v.T > 0 ? v.n * Rgas * v.T / v.V : 0,
+      mainUnit: "Pa", lines: [["Pressure", v.n * Rgas * v.T / v.V, "Pa"], ["Pressure", v.n * Rgas * v.T / v.V / 1000, "kPa"], ["Specific molar volume", v.n > 0 ? v.V / v.n : 0, "m³/mol"]], formula: "PV = nRT"
+    })),
+
+    tool("carnot", "Thermal", "Carnot efficiency", "Ideal upper-limit thermal efficiency between hot and cold reservoirs.", [field("Th", "Hot temperature", 600, "K", "0"), field("Tc", "Cold temperature", 300, "K", "0")], v => ({
+      main: v.Th > 0 ? (1 - v.Tc / v.Th) * 100 : 0, mainUnit: "%", lines: [["Carnot efficiency", (1 - v.Tc / v.Th) * 100, "%"], ["Maximum work per 100 kJ input", 100 * (1 - v.Tc / v.Th), "kJ"]], formula: "ηCarnot = 1 − Tc/Th"
+    })),
+
+    tool("cop", "Thermal", "COP / EER", "Coefficient of performance for heat pumps or refrigeration.", [field("Q", "Useful thermal rate", 5, "kW", "0"), field("W", "Input electrical power", 1.5, "kW", "0")], v => ({
+      main: v.W > 0 ? v.Q / v.W : 0, mainUnit: "COP", lines: [["COP", v.W > 0 ? v.Q / v.W : 0, ""], ["Approximate EER", v.W > 0 ? v.Q / v.W * 3.412142 : 0, "Btu/Wh"], ["Electrical input", v.W, "kW"]], formula: "COP = Quseful/Win" })),
+
+    tool("conduction-wall", "Thermal", "Conduction through wall", "One-dimensional heat flow through a flat wall.", [field("k", "Conductivity", 0.8, "W/m·K", "0"), field("A", "Area", 20, "m²", "0"), field("dT", "Temperature difference", 20, "K", "0"), field("L", "Thickness", 0.1, "m", "0")], v => ({
+      main: v.L > 0 ? v.k * v.A * v.dT / v.L : 0, mainUnit: "W", lines: [["Heat flow", v.L > 0 ? v.k * v.A * v.dT / v.L : 0, "W"], ["Heat flux", v.L > 0 ? v.k * v.dT / v.L : 0, "W/m²"], ["Thermal resistance", v.k * v.A > 0 ? v.L / (v.k * v.A) : 0, "K/W"]], formula: "Q̇ = kAΔT/L · R = L/(kA)" })),
+
+    tool("convection", "Thermal", "Convection heat transfer", "Newton's law of cooling.", [field("h", "Convection coefficient", 10, "W/m²·K", "0"), field("A", "Area", 10, "m²", "0"), field("dT", "Surface-fluid ΔT", 20, "K", "")], v => ({
+      main: v.h * v.A * v.dT, mainUnit: "W", lines: [["Heat transfer", v.h * v.A * v.dT, "W"], ["Heat flux", v.h * v.dT, "W/m²"]], formula: "Q̇ = hAΔT"
+    })),
+
+    tool("radiation", "Thermal", "Thermal radiation", "Net idealized radiation exchange with emissivity.", [field("eps", "Emissivity", 0.9, "", "0", "0.01"), field("A", "Area", 10, "m²", "0"), field("T1", "Surface T1", 500, "K", "0"), field("T2", "Surrounding T2", 300, "K", "0")], v => ({
+      main: v.eps * SIGMA * v.A * (v.T1 ** 4 - v.T2 ** 4), mainUnit: "W net", lines: [["Net radiation", v.eps * SIGMA * v.A * (v.T1 ** 4 - v.T2 ** 4), "W"]], formula: "Q̇ = εσA(T₁⁴ − T₂⁴)" })),
+
+    tool("lmtd", "Thermal", "Log-mean temperature difference", "LMTD for heat exchangers from terminal temperature differences.", [field("dT1", "ΔT terminal 1", 40, "K", "0"), field("dT2", "ΔT terminal 2", 20, "K", "0")], v => {
+      const lm = v.dT1 === v.dT2 ? v.dT1 : (v.dT1 - v.dT2) / Math.log(v.dT1 / v.dT2);
+      return { main: lm, mainUnit: "K", lines: [["LMTD", lm, "K"]], formula: "LMTD = (ΔT1−ΔT2)/ln(ΔT1/ΔT2)" };
+    }),
+
+    tool("heat-exchanger", "Thermal", "Heat exchanger duty", "Estimate heat-transfer rate from overall U, area and LMTD.", [field("U", "Overall U", 500, "W/m²·K", "0"), field("A", "Area", 10, "m²", "0"), field("lm", "LMTD", 30, "K", "0")], v => ({
+      main: v.U * v.A * v.lm / 1000, mainUnit: "kW", lines: [["Heat transfer rate", v.U * v.A * v.lm / 1000, "kW"], ["Heat per hour", v.U * v.A * v.lm * 3600 / 1e6, "MJ/h"]], formula: "Q̇ = UAΔTlm"
+    })),
+
+    tool("cooling-load", "Thermal", "Cooling load estimate", "Quick sensible-load estimate from room volume, ACH and sensible internal heat.", [field("V", "Room volume", 100, "m³", "0"), field("ACH", "Air changes/hour", 5, "1/h", "0"), field("dT", "Indoor-outdoor ΔT", 10, "K", "0"), field("Qint", "Internal sensible gain", 2, "kW", "0")], v => {
+      const mdot = 1.2 * v.V * v.ACH / 3600;
+      const Qa = mdot * 1005 * v.dT;
+      return { main: (Qa + v.Qint * 1000) / 1000, mainUnit: "kW sensible", lines: [["Ventilation air load", Qa / 1000, "kW"], ["Internal gain", v.Qint, "kW"], ["Total estimate", (Qa + v.Qint * 1000) / 1000, "kW"], ["Cooling tons", (Qa + v.Qint * 1000) / 3516.85284, "TR"]], formula: "Qair = ṁcpΔT; ṁ ≈ ρ·V·ACH/3600" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Electrical (compact umbrella version)
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("single-phase", "Electrical", "Single-phase AC power", "Find kW, kVA, current and power factor.", [field("V", "Voltage", 230, "V", "0"), field("I", "Current", 10, "A", "0"), field("pf", "Power factor", 0.9, "", "0", "0.01")], v => {
+      const S = v.V * v.I / 1000, P = S * v.pf;
+      return { main: P, mainUnit: "kW", lines: [["Apparent power", S, "kVA"], ["Real power", P, "kW"], ["Reactive power", S * Math.sqrt(Math.max(0, 1 - v.pf ** 2)), "kvar"], ["Current for 1 kW", v.V > 0 ? 1000 / (v.V * v.pf) : 0, "A"]], formula: "S=VI · P=VIpf · Q=√(S²−P²)" };
+    }),
+
+    tool("three-phase", "Electrical", "Three-phase power", "Balanced three-phase power, line current and kVA.", [field("V", "Line-line voltage", 400, "V", "0"), field("I", "Line current", 10, "A", "0"), field("pf", "Power factor", 0.9, "", "0", "0.01")], v => {
+      const S = Math.sqrt(3) * v.V * v.I / 1000, P = S * v.pf;
+      return { main: P, mainUnit: "kW", lines: [["Apparent power", S, "kVA"], ["Real power", P, "kW"], ["Reactive power", S * Math.sqrt(Math.max(0, 1 - v.pf ** 2)), "kvar"]], formula: "S = √3VLI L · P = √3VLIpf" };
+    }),
+
+    tool("voltage-drop", "Electrical", "Cable voltage drop", "Approximate resistive voltage drop and I²R power loss.", [field("I", "Current", 20, "A", "0"), field("L", "One-way length", 50, "m", "0"), field("A", "Conductor area", 2.5, "mm²", "0"), field("rho", "Resistivity", 0.0175, "Ω·mm²/m", "0"), field("V", "System voltage", 230, "V", "0")], v => {
+      const R = v.A > 0 ? v.rho * (2 * v.L) / v.A : 0, vd = v.I * R;
+      return { main: vd, mainUnit: "V drop", lines: [["Loop resistance", R, "Ω"], ["Voltage drop", vd, "V"], ["Voltage drop", v.V > 0 ? vd / v.V * 100 : 0, "%"], ["Cable loss", v.I ** 2 * R, "W"]], formula: "Rloop = ρ(2L)/A · Vdrop = IR · Ploss = I²R" };
+    }),
+
+    tool("motor", "Electrical", "Motor current / torque", "Estimate motor input current and shaft torque from rated output.", [field("P", "Motor output", 5, "kW", "0"), field("V", "Line voltage", 400, "V", "0"), field("pf", "Power factor", 0.85, "", "0", "0.01"), field("eta", "Efficiency", 90, "%", "0", "0.1"), field("rpm", "Speed", 1450, "rpm", "0")], v => {
+      const Pin = v.P / (v.eta / 100), I = Pin * 1000 / (Math.sqrt(3) * v.V * v.pf), Tq = v.rpm > 0 ? v.P * 1000 / (2 * PI * v.rpm / 60) : 0;
+      return { main: I, mainUnit: "A", lines: [["Input power", Pin, "kW"], ["Line current", I, "A"], ["Shaft torque", Tq, "N·m"]], formula: "Pin=Pout/η · I=Pin/(√3Vpf) · T=P/ω" };
+    }),
+
+    tool("transformer", "Electrical", "Transformer sizing", "Estimate primary/secondary current from kVA and voltage.", [field("kva", "Transformer rating", 100, "kVA", "0"), field("V1", "Primary voltage", 11000, "V", "0"), field("V2", "Secondary voltage", 400, "V", "0")], v => ({
+      main: v.kva * 1000 / v.V2, mainUnit: "A secondary", lines: [["Primary current", v.kva * 1000 / v.V1, "A"], ["Secondary current", v.kva * 1000 / v.V2, "A"], ["Voltage ratio", v.V1 / v.V2, "×"], ["Turns ratio", v.V1 / v.V2, "× ideal"]], formula: "I = S/V · V1/V2 = N1/N2"
+    })),
+
+    tool("pf-correction", "Electrical", "Power-factor correction", "Estimate capacitor kvar to improve power factor.", [field("P", "Real power", 100, "kW", "0"), field("pf1", "Existing PF", 0.75, "", "0", "0.01"), field("pf2", "Target PF", 0.95, "", "0", "0.01")], v => {
+      const q1 = v.P * Math.tan(Math.acos(v.pf1)), q2 = v.P * Math.tan(Math.acos(v.pf2));
+      return { main: Math.max(0, q1 - q2), mainUnit: "kvar capacitor", lines: [["Existing reactive", q1, "kvar"], ["Target reactive", q2, "kvar"], ["Capacitor bank", Math.max(0, q1 - q2), "kvar"], ["Apparent power after correction", v.P / v.pf2, "kVA"]], formula: "Qc = P[tan(cos⁻¹pf1) − tan(cos⁻¹pf2)]" };
+    }),
+
+    tool("battery", "Electrical", "Battery / DC runtime", "Estimate DC current and runtime from battery energy and load.", [field("V", "Battery voltage", 48, "V", "0"), field("Ah", "Capacity", 100, "Ah", "0"), field("P", "DC load", 1000, "W", "0"), field("DoD", "Usable depth", 90, "%", "0", "0.1"), field("eta", "System efficiency", 90, "%", "0", "0.1")], v => {
+      const Wh = v.V * v.Ah * v.DoD / 100, runtime = Wh * (v.eta / 100) / v.P;
+      return { main: runtime, mainUnit: "h runtime", lines: [["Nominal energy", v.V * v.Ah / 1000, "kWh"], ["Usable energy", Wh / 1000, "kWh"], ["Average DC current", v.P / v.V, "A"], ["Estimated runtime", runtime, "h"]], formula: "Wh=V·Ah·DoD · t≈Wh·η/P" };
+    }),
+
+    tool("ups", "Electrical", "UPS / inverter sizing", "Estimate inverter rating and battery energy for an AC load.", [field("P", "Load", 2000, "W", "0"), field("pf", "Load PF", 0.9, "", "0", "0.01"), field("hours", "Backup time", 2, "h", "0"), field("V", "Battery voltage", 48, "V", "0"), field("eta", "Inverter efficiency", 90, "%", "0", "0.1"), field("DoD", "Battery usable fraction", 80, "%", "0", "0.1")], v => {
+      const kva = v.P / v.pf / 1000, Wh = v.P * v.hours / (v.eta / 100) / (v.DoD / 100), Ah = Wh / v.V;
+      return { main: kva, mainUnit: "kVA minimum", lines: [["Apparent load", kva, "kVA"], ["Required battery energy", Wh / 1000, "kWh nominal"], ["Battery capacity", Ah, "Ah at selected V"], ["DC current at full load", v.P / (v.V * (v.eta / 100)), "A"]], formula: "S=P/pf · Ebatt=P·t/(η·DoD) · Ah=Wh/V" };
+    }),
+
+    tool("led-resistor", "Electrical", "LED series resistor", "Choose a simple resistor for a single LED from a DC supply.", [field("Vs", "Supply voltage", 12, "V", "0"), field("Vf", "LED forward voltage", 2.1, "V", "0"), field("I", "LED current", 20, "mA", "0")], v => {
+      const R = v.I > 0 ? (v.Vs - v.Vf) / (v.I / 1000) : 0, P = (v.I / 1000) ** 2 * R;
+      return { main: R, mainUnit: "Ω resistor", lines: [["Resistance", R, "Ω"], ["Resistor power", P, "W"], ["Suggested standard power class", Math.ceil(P * 2 * 10) / 10, "W+"]], formula: "R=(Vs−Vf)/I · PR=I²R" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Construction / civil
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("concrete", "Construction", "Concrete volume & mass", "Estimate concrete volume, wet/dry conversion and component mass from a mix ratio.", [field("L", "Length", 5, "m", "0"), field("W", "Width", 3, "m", "0"), field("D", "Depth", 0.15, "m", "0"), field("dry", "Dry-volume factor", 1.54, "×", "0", "0.01"), field("cement", "Cement ratio", 1, "parts", "0"), field("sand", "Sand ratio", 2, "parts", "0"), field("agg", "Aggregate ratio", 4, "parts", "0")], v => {
+      const wet = v.L * v.W * v.D, dry = wet * v.dry, total = v.cement + v.sand + v.agg;
+      return { main: wet, mainUnit: "m³ wet concrete", lines: [["Wet volume", wet, "m³"], ["Dry material volume", dry, "m³"], ["Cement share", dry * v.cement / total, "m³ equivalent"], ["Sand share", dry * v.sand / total, "m³"], ["Aggregate share", dry * v.agg / total, "m³"]], formula: "Vwet=LWD · Vdry≈factor×Vwet · share=Vdry·part/Σparts" };
+    }),
+
+    tool("rebar", "Construction", "Rebar weight", "Calculate steel reinforcement weight from bar diameter and total length.", [field("d", "Bar diameter", 12, "mm", "0"), field("L", "Total length", 100, "m", "0"), field("rho", "Steel density", 7850, "kg/m³", "0")], v => {
+      const A = PI * (v.d / 1000) ** 2 / 4, mass = A * v.L * v.rho;
+      return { main: mass, mainUnit: "kg", lines: [["Cross-sectional area", A * 1e6, "mm²"], ["Mass", mass, "kg"], ["Mass per metre", mass / v.L, "kg/m"]], formula: "m = ρAL · A = πd²/4" };
+    }),
+
+    tool("brick", "Construction", "Brick count / wall volume", "Estimate masonry units from wall dimensions and brick/joint dimensions.", [field("L", "Wall length", 10, "m", "0"), field("H", "Wall height", 3, "m", "0"), field("t", "Wall thickness", 0.1, "m", "0"), field("bl", "Brick length", 0.19, "m", "0"), field("bh", "Brick height", 0.09, "m", "0"), field("bt", "Brick thickness", 0.09, "m", "0"), field("joint", "Joint allowance", 0.01, "m", "0", "0.001")], v => {
+      const wallV = v.L * v.H * v.t, brickV = (v.bl + v.joint) * (v.bh + v.joint) * (v.bt + v.joint), count = brickV > 0 ? wallV / brickV : 0;
+      return { main: count, mainUnit: "bricks", lines: [["Wall volume", wallV, "m³"], ["Theoretical brick count", count, "units"], ["With 5% waste", count * 1.05, "units"]], formula: "N ≈ wall volume / nominal brick+joints volume" };
+    }),
+
+    tool("plaster", "Construction", "Plaster material", "Estimate plaster volume from wall area, thickness and dry factor.", [field("A", "Plaster area", 100, "m²", "0"), field("t", "Thickness", 15, "mm", "0"), field("dry", "Dry factor", 1.25, "×", "0", "0.01"), field("cement", "Cement ratio", 1, "parts", "0"), field("sand", "Sand ratio", 4, "parts", "0")], v => {
+      const wet = v.A * v.t / 1000, dry = wet * v.dry, total = v.cement + v.sand;
+      return { main: wet, mainUnit: "m³ wet mortar", lines: [["Wet mortar", wet, "m³"], ["Dry materials", dry, "m³"], ["Cement share", dry * v.cement / total, "m³"], ["Sand share", dry * v.sand / total, "m³"]], formula: "V = A·t · Vdry≈factor×Vwet" };
+    }),
+
+    tool("paint", "Construction", "Paint quantity", "Estimate litres/coats from surface area and coverage.", [field("A", "Surface area", 150, "m²", "0"), field("coverage", "Coverage", 10, "m²/L", "0"), field("coats", "Coats", 2, "", "0"), field("waste", "Waste allowance", 10, "%", "0", "0.1")], v => {
+      const liters = v.A / v.coverage * v.coats * (1 + v.waste / 100);
+      return { main: liters, mainUnit: "L paint", lines: [["Paint required", liters, "L"], ["Paint per coat", v.A / v.coverage, "L"], ["With waste", liters, "L"]], formula: "Paint = Area/Coverage × coats × (1+waste)" };
+    }),
+
+    tool("excavation", "Construction", "Excavation & haul", "Estimate cut volume, swell volume and truck loads.", [field("L", "Length", 20, "m", "0"), field("W", "Width", 2, "m", "0"), field("D", "Depth", 1.5, "m", "0"), field("swell", "Swell", 25, "%", "0", "0.1"), field("truck", "Truck capacity", 8, "m³ loose", "0")], v => {
+      const bank = v.L * v.W * v.D, loose = bank * (1 + v.swell / 100), loads = v.truck > 0 ? Math.ceil(loose / v.truck) : 0;
+      return { main: bank, mainUnit: "m³ bank", lines: [["Bank volume", bank, "m³"], ["Loose volume", loose, "m³"], ["Truck loads", loads, "loads"]], formula: "Vbank=LWD · Vloose=Vbank(1+swell)" };
+    }),
+
+    tool("stair", "Construction", "Staircase geometry", "Estimate riser/tread count and stair angle.", [field("H", "Total rise", 3, "m", "0"), field("R", "Riser", 0.17, "m", "0"), field("T", "Tread", 0.28, "m", "0")], v => {
+      const risers = v.R > 0 ? Math.ceil(v.H / v.R) : 0, actualRiser = risers > 0 ? v.H / risers : 0, goings = Math.max(0, risers - 1), run = goings * v.T, angle = run > 0 ? Math.atan2(v.H, run) * 180 / PI : 90;
+      return { main: risers, mainUnit: "risers", lines: [["Risers", risers, "count"], ["Actual riser", actualRiser * 1000, "mm"], ["Horizontal run", run, "m"], ["Stair angle", angle, "°"]], formula: "n≈ceil(H/R) · θ=atan(H/run)" };
+    }),
+
+    tool("roof-slope", "Construction", "Roof slope / rafter", "Calculate roof pitch, angle, rafter length and rise.", [field("run", "Horizontal run", 4, "m", "0"), field("rise", "Vertical rise", 1, "m", "0")], v => {
+      const angle = Math.atan2(v.rise, v.run) * 180 / PI, rafter = Math.hypot(v.run, v.rise), slope = v.run > 0 ? v.rise / v.run * 100 : 0;
+      return { main: angle, mainUnit: "° pitch", lines: [["Slope", slope, "%"], ["Angle", angle, "°"], ["Rafter length", rafter, "m"], ["Rise per 1 m run", v.run > 0 ? v.rise / v.run : 0, "m"]], formula: "θ=atan(rise/run) · rafter=√(run²+rise²)" };
+    }),
+
+    tool("construction-cost", "Construction", "Quantity × unit cost", "Quick BOQ line-item estimator with waste and tax/overhead.", [field("qty", "Quantity", 100, "units", "0"), field("unit", "Unit cost", 500, "BDT/unit", "0"), field("waste", "Waste", 5, "%", "0", "0.1"), field("overhead", "Overhead", 10, "%", "0", "0.1")], v => {
+      const material = v.qty * v.unit * (1 + v.waste / 100), total = material * (1 + v.overhead / 100);
+      return { main: total, mainUnit: "BDT total", lines: [["Base", v.qty * v.unit, "BDT"], ["With waste", material, "BDT"], ["Total with overhead", total, "BDT"]], formula: "Total=Q·Unit·(1+waste)·(1+overhead)" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Manufacturing
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("cutting-speed", "Manufacturing", "Cutting speed ↔ RPM", "Find spindle RPM from cutting speed and tool/work diameter.", [field("Vc", "Cutting speed", 100, "m/min", "0"), field("D", "Diameter", 50, "mm", "0")], v => ({
+      main: v.D > 0 ? 1000 * v.Vc / (PI * v.D) : 0, mainUnit: "rpm", lines: [["Spindle speed", v.D > 0 ? 1000 * v.Vc / (PI * v.D) : 0, "rpm"]], formula: "Vc = πDn/1000"
+    })),
+
+    tool("feed-rate", "Manufacturing", "Feed rate", "Calculate machine feed from feed per tooth, teeth and spindle speed.", [field("fz", "Feed/tooth", 0.1, "mm/tooth", "0"), field("z", "Number of teeth", 4, "teeth", "1"), field("rpm", "Spindle speed", 1500, "rpm", "0")], v => ({
+      main: v.fz * v.z * v.rpm, mainUnit: "mm/min", lines: [["Feed rate", v.fz * v.z * v.rpm, "mm/min"], ["Feed per revolution", v.fz * v.z, "mm/rev"]], formula: "F = fz·z·n"
+    })),
+
+    tool("milling-mrr", "Manufacturing", "Milling material removal rate", "Approximate milling MRR from width, depth and feed.", [field("ae", "Cut width", 20, "mm", "0"), field("ap", "Cut depth", 2, "mm", "0"), field("F", "Feed", 300, "mm/min", "0")], v => ({
+      main: v.ae * v.ap * v.F / 1000, mainUnit: "cm³/min", lines: [["MRR", v.ae * v.ap * v.F, "mm³/min"], ["MRR", v.ae * v.ap * v.F / 1000, "cm³/min"]], formula: "MRR = ae·ap·F"
+    })),
+
+    tool("turning-time", "Manufacturing", "Turning machining time", "Estimate turning time from length, feed and RPM.", [field("L", "Machining length", 100, "mm", "0"), field("feed", "Feed/rev", 0.2, "mm/rev", "0"), field("rpm", "RPM", 1000, "rpm", "0"), field("passes", "Passes", 2, "", "1")], v => ({
+      main: v.feed * v.rpm > 0 ? v.L * v.passes / (v.feed * v.rpm) : 0, mainUnit: "min", lines: [["Time", v.feed * v.rpm > 0 ? v.L * v.passes / (v.feed * v.rpm) : 0, "min"], ["Feed speed", v.feed * v.rpm, "mm/min"]], formula: "t = L·passes/(f·n)"
+    })),
+
+    tool("drilling-time", "Manufacturing", "Drilling time", "Estimate drill time including approach allowance.", [field("depth", "Hole depth", 30, "mm", "0"), field("allowance", "Allowance", 3, "mm", "0"), field("feed", "Feed/rev", 0.15, "mm/rev", "0"), field("rpm", "RPM", 1200, "rpm", "0")], v => ({
+      main: v.feed * v.rpm > 0 ? (v.depth + v.allowance) / (v.feed * v.rpm) : 0, mainUnit: "min", lines: [["Drilling time", v.feed * v.rpm > 0 ? (v.depth + v.allowance) / (v.feed * v.rpm) : 0, "min"], ["Feed speed", v.feed * v.rpm, "mm/min"]], formula: "t = depth/(feed/rev × RPM)"
+    })),
+
+    tool("specific-cutting-energy", "Manufacturing", "Cutting power estimate", "Estimate cutting power from MRR and specific cutting energy.", [field("mrr", "MRR", 10, "cm³/min", "0"), field("u", "Specific cutting energy", 2, "J/mm³", "0"), field("eta", "Machine efficiency", 80, "%", "0", "0.1")], v => {
+      const P = v.mrr * 1000 / 60 * v.u / (v.eta / 100);
+      return { main: P / 1000, mainUnit: "kW", lines: [["Cutting power", P / 1000, "kW"], ["Energy per minute", v.mrr * 1000 * v.u / 1000, "kJ/min"]], formula: "P ≈ MRR×U/η" };
+    }),
+
+    tool("sheet-bend", "Manufacturing", "Sheet-metal bend allowance", "Estimate bend allowance with K-factor.", [field("R", "Inside radius", 2, "mm", "0"), field("t", "Thickness", 1, "mm", "0"), field("A", "Bend angle", 90, "°", "0", "0.1"), field("K", "K-factor", 0.33, "", "0", "0.01")], v => {
+      const ang = v.A * PI / 180, BA = ang * (v.R + v.K * v.t), BD = 2 * (v.R + v.t) * Math.tan(ang / 2) - BA;
+      return { main: BA, mainUnit: "mm bend allowance", lines: [["Bend allowance", BA, "mm"], ["Outside setback", BD, "mm"]], formula: "BA = A(rad)(R + Kt)" };
+    }),
+
+    tool("filament", "Manufacturing", "3D-print filament estimate", "Estimate filament mass, length and material cost.", [field("volume", "Part volume", 50, "cm³", "0"), field("infill", "Effective fill", 30, "%", "0", "0.1"), field("rho", "Filament density", 1.24, "g/cm³", "0"), field("cost", "Material cost", 3000, "BDT/kg", "0")], v => {
+      const mass = v.volume * (v.infill / 100) * v.rho;
+      const cost = mass / 1000 * v.cost;
+      return { main: mass, mainUnit: "g", lines: [["Estimated mass", mass, "g"], ["Material cost", cost, "BDT"], ["At 1.75 mm filament", (mass / v.rho) / (Math.PI * (0.175 / 2) ** 2) * 10, "mm approximate filament length"]], formula: "m≈V·fill·ρ · Cost=m·price" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Chemistry / process / engineering economics
+  // -------------------------------------------------------------------------
+  T.push(
+    tool("molarity", "Process", "Molarity / solution mass", "Calculate molarity from moles and solution volume, or mass and molar mass.", [field("mass", "Solute mass", 58.44, "g", "0"), field("MW", "Molar mass", 58.44, "g/mol", "0"), field("V", "Solution volume", 1, "L", "0")], v => {
+      const mol = v.MW > 0 ? v.mass / v.MW : 0, M = v.V > 0 ? mol / v.V : 0;
+      return { main: M, mainUnit: "mol/L", lines: [["Moles", mol, "mol"], ["Molarity", M, "mol/L"], ["Mass concentration", v.V > 0 ? v.mass / v.V : 0, "g/L"]], formula: "n=m/MW · C=n/V" };
+    }),
+
+    tool("dilution", "Process", "Solution dilution", "Use C1V1 = C2V2 to find stock volume and solvent addition.", [field("C1", "Stock concentration", 10, "M", "0"), field("C2", "Target concentration", 1, "M", "0"), field("V2", "Final volume", 1000, "mL", "0")], v => {
+      const V1 = v.C1 > 0 ? v.C2 * v.V2 / v.C1 : 0;
+      return { main: V1, mainUnit: "mL stock", lines: [["Stock needed", V1, "mL"], ["Solvent to add", Math.max(0, v.V2 - V1), "mL"]], formula: "C1V1 = C2V2" };
+    }),
+
+    tool("ppm", "Process", "ppm / concentration", "Convert a mass concentration to ppm for dilute aqueous solutions.", [field("mg", "Solute", 10, "mg", "0"), field("L", "Solution volume", 1, "L", "0")], v => ({
+      main: v.L > 0 ? v.mg / v.L : 0, mainUnit: "ppm approx. in water", lines: [["Concentration", v.L > 0 ? v.mg / v.L : 0, "mg/L"], ["Mass fraction", v.L > 0 ? v.mg / (v.L * 1e6) : 0, "kg/kg"]], formula: "For dilute water: 1 mg/L ≈ 1 ppm"
+    })),
+
+    tool("mixing", "Process", "Two-stream mixing", "Weighted-average temperature or concentration of two streams.", [field("m1", "Stream 1 mass flow", 10, "kg/h", "0"), field("x1", "Stream 1 fraction", 0.8, "fraction", "0"), field("m2", "Stream 2 mass flow", 20, "kg/h", "0"), field("x2", "Stream 2 fraction", 0.2, "fraction", "0")], v => {
+      const total = v.m1 + v.m2, x = total > 0 ? (v.m1 * v.x1 + v.m2 * v.x2) / total : 0;
+      return { main: x, mainUnit: "mixed fraction", lines: [["Total flow", total, "kg/h"], ["Mixed fraction", x, ""], ["Mixed %", x * 100, "%"]], formula: "xmix = Σ(mx)/Σm" };
+    }),
+
+    tool("markup-margin", "Economics", "Markup ↔ margin", "Convert cost and selling price into gross margin and markup.", [field("cost", "Cost", 100, "BDT", "0"), field("price", "Selling price", 140, "BDT", "0")], v => ({
+      main: v.price > 0 ? (v.price - v.cost) / v.price * 100 : 0, mainUnit: "% gross margin", lines: [["Gross profit", v.price - v.cost, "BDT"], ["Gross margin", v.price > 0 ? (v.price - v.cost) / v.price * 100 : 0, "%"], ["Markup", v.cost > 0 ? (v.price - v.cost) / v.cost * 100 : 0, "%"]], formula: "Margin=(Price−Cost)/Price · Markup=(Price−Cost)/Cost" })),
+
+    tool("breakeven", "Economics", "Break-even quantity", "Find units required to cover fixed costs.", [field("fixed", "Fixed cost", 100000, "BDT", "0"), field("price", "Selling price/unit", 1000, "BDT", "0"), field("variable", "Variable cost/unit", 600, "BDT", "0")], v => {
+      const margin = v.price - v.variable, q = margin > 0 ? v.fixed / margin : 0;
+      return { main: q, mainUnit: "units break-even", lines: [["Contribution/unit", margin, "BDT"], ["Break-even", q, "units"], ["Break-even revenue", q * v.price, "BDT"]], formula: "QBE = Fixed costs/(Price−Variable cost)" };
+    }),
+
+    tool("simple-roi", "Economics", "ROI / payback", "Simple return and payback for an engineering project.", [field("invest", "Investment", 1000000, "BDT", "0"), field("annual", "Annual net benefit", 250000, "BDT/year", "0"), field("life", "Project life", 5, "years", "0")], v => ({
+      main: v.invest > 0 ? v.annual / v.invest * 100 : 0, mainUnit: "% annual simple ROI", lines: [["Simple annual ROI", v.invest > 0 ? v.annual / v.invest * 100 : 0, "%"], ["Simple payback", v.annual > 0 ? v.invest / v.annual : 0, "years"], ["Life net benefit", v.annual * v.life - v.invest, "BDT"]], formula: "ROI = annual net benefit / investment · Payback = investment/annual benefit" })),
+
+    tool("depreciation", "Economics", "Straight-line depreciation", "Estimate annual depreciation and book value.", [field("cost", "Initial cost", 1000000, "BDT", "0"), field("salvage", "Salvage value", 100000, "BDT", "0"), field("life", "Useful life", 10, "years", "0"), field("age", "Current age", 3, "years", "0")], v => {
+      const dep = v.life > 0 ? (v.cost - v.salvage) / v.life : 0;
+      return { main: dep, mainUnit: "BDT/year depreciation", lines: [["Annual depreciation", dep, "BDT/year"], ["Accumulated", Math.min(v.cost - v.salvage, dep * v.age), "BDT"], ["Book value", Math.max(v.salvage, v.cost - dep * v.age), "BDT"]], formula: "Annual dep=(Cost−Salvage)/Life" };
+    }),
+
+    tool("npv", "Economics", "Simple NPV", "Discount a constant annual cash flow stream plus terminal value.", [field("initial", "Initial investment", 1000000, "BDT", "0"), field("cash", "Annual cash flow", 300000, "BDT/year"), field("rate", "Discount rate", 10, "%/year", "-100", "0.1"), field("years", "Years", 5, "years", "0"), field("terminal", "Terminal value", 0, "BDT", "0")], v => {
+      let pv = -v.initial;
+      for (let i = 1; i <= Math.floor(v.years); i++) pv += v.cash / (1 + v.rate / 100) ** i;
+      pv += v.terminal / (1 + v.rate / 100) ** v.years;
+      return { main: pv, mainUnit: "BDT NPV", lines: [["NPV", pv, "BDT"], ["PV of recurring cash flow", Math.abs(v.rate) < 1e-12 ? v.cash * v.years : v.cash * (1 - (1 + v.rate / 100) ** (-v.years)) / (v.rate / 100), "BDT"]], formula: "NPV = −I + Σ Ct/(1+r)^t + TV/(1+r)^n" };
+    })
+  );
+
+  // -------------------------------------------------------------------------
+  // Helper / reference formulas
+  // -------------------------------------------------------------------------
+  const categories = ["All", ...new Set(T.map(x => x.category))];
+
+  const commonFormulas = [
+    ["Mechanics", "F = ma", "Force from mass and acceleration."],
+    ["Energy", "E = Pt", "Electrical/mechanical energy from power and time."],
+    ["Power", "P = Tω", "Rotating shaft power."],
+    ["Structures", "σ = F/A", "Average axial stress."],
+    ["Beam", "Mmax = wL²/8", "Full-span UDL on a simply supported beam."],
+    ["Fluids", "Q = AV", "Volumetric flow relation."],
+    ["Pipe", "hf = f(L/D)V²/(2g)", "Darcy-Weisbach friction loss."],
+    ["Thermal", "Q = mcΔT", "Sensible heat."],
+    ["Heat transfer", "Q̇ = UAΔTlm", "Heat exchanger duty."],
+    ["Electrical", "P = √3VLIpf", "Balanced three-phase real power."],
+    ["Economics", "QBE = Fixed/(Price−Variable)", "Break-even units."]
+  ];
+
+  function renderTabs() {
+    const el = $("tabs");
+    el.replaceChildren();
+    categories.forEach(cat => {
+      const b = document.createElement("button");
+      b.className = `btn secondary sm tab ${state.category === cat ? "active" : ""}`;
+      b.textContent = cat;
+      b.onclick = () => { state.category = cat; renderTabs(); renderTools(); };
+      el.append(b);
+    });
+  }
+
+  function filteredTools() {
+    const q = state.query.trim().toLowerCase();
+    return T.filter(t => {
+      const categoryOK = state.category === "All" || t.category === state.category;
+      const favoriteOK = !state.favoritesOnly || state.favorites.has(t.id);
+      const searchOK = !q || `${t.title} ${t.desc} ${t.category} ${t.formula}`.toLowerCase().includes(q);
+      return categoryOK && favoriteOK && searchOK;
+    });
+  }
+
+  function buildCard(t) {
+    const article = document.createElement("article");
+    article.className = "tool-card";
+    article.dataset.tool = t.id;
+
+    const head = document.createElement("div");
+    head.className = "tool-head";
+
+    const info = document.createElement("div");
+    const title = document.createElement("div");
+    title.className = "tool-title";
+    title.textContent = t.title;
+    const desc = document.createElement("div");
+    desc.className = "tool-desc";
+    desc.textContent = t.desc;
+    info.append(title, desc);
+
+    const star = document.createElement("button");
+    star.className = `star ${state.favorites.has(t.id) ? "active" : ""}`;
+    star.setAttribute("aria-label", "Toggle favorite");
+    star.textContent = state.favorites.has(t.id) ? "★" : "☆";
+    star.onclick = () => {
+      if (state.favorites.has(t.id)) state.favorites.delete(t.id); else state.favorites.add(t.id);
+      localStorage.setItem("aznur-eng-favs", JSON.stringify([...state.favorites]));
+      renderTools();
+    };
+    head.append(info, star);
+
+    const form = document.createElement("div");
+    form.className = "field-grid";
+    const inputMap = {};
+
+    t.fields.forEach(f => {
+      const wrap = document.createElement("div");
+      wrap.className = "field";
+      const label = document.createElement("label");
+      label.textContent = f.unit ? `${f.label} · ${f.unit}` : f.label;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.id = `${t.id}-${f.id}`;
+      input.value = f.value;
+      if (f.min !== "") input.min = f.min;
+      input.step = f.step;
+      if (f.hint) {
+        const hint = document.createElement("div");
+        hint.className = "hint";
+        hint.textContent = f.hint;
+        wrap.append(label, input, hint);
+      } else {
+        wrap.append(label, input);
+      }
+      inputMap[f.id] = input;
+      form.append(wrap);
+    });
+
+    const actions = document.createElement("div");
+    actions.className = "row";
+    actions.style.marginTop = "11px";
+    const calcBtn = document.createElement("button");
+    calcBtn.className = "btn accent sm";
+    calcBtn.textContent = "Calculate";
+    const resetBtn = document.createElement("button");
+    resetBtn.className = "btn secondary sm";
+    resetBtn.textContent = "Reset";
+    actions.append(calcBtn, resetBtn);
+
+    const result = document.createElement("div");
+    result.className = "result-box";
+    result.hidden = true;
+
+    function calculate() {
+      try {
+        const values = Object.fromEntries(Object.entries(inputMap).map(([id, input]) => [id, Number(input.value)]));
+        const out = t.calc(values);
+        result.replaceChildren();
+
+        const main = document.createElement("div");
+        main.className = "result-main";
+        main.textContent = `${fmt(out.main)} ${out.mainUnit || ""}`.trim();
+        result.append(main);
+
+        if (out.lines?.length) {
+          const list = document.createElement("div");
+          list.className = "result-list";
+          out.lines.forEach(([label, value, unit]) => {
+            const line = document.createElement("div");
+            line.className = "result-line";
+            const a = document.createElement("span");
+            a.textContent = label;
+            const b = document.createElement("b");
+            b.textContent = `${typeof value === "number" ? fmt(value) : value} ${unit || ""}`.trim();
+            line.append(a, b);
+            list.append(line);
+          });
+          result.append(list);
+        }
+
+        if (out.formula || t.formula) {
+          const formula = document.createElement("div");
+          formula.className = "formula";
+          formula.textContent = out.formula || t.formula;
+          result.append(formula);
+        }
+        result.hidden = false;
+        remember(t.id, out.main);
+      } catch (error) {
+        result.replaceChildren();
+        const message = document.createElement("div");
+        message.className = "bad";
+        message.textContent = error?.message || "Unable to calculate with the supplied values.";
+        result.append(message);
+        result.hidden = false;
+      }
+    }
+
+    function reset() {
+      t.fields.forEach(f => { inputMap[f.id].value = f.value; });
+      result.hidden = true;
+      result.replaceChildren();
+    }
+
+    calcBtn.onclick = calculate;
+    resetBtn.onclick = reset;
+    Object.values(inputMap).forEach(inp => inp.addEventListener("keydown", e => { if (e.key === "Enter") calculate(); }));
+
+    article.append(head, form, actions, result);
+    return article;
+  }
+
+  function renderTools() {
+    const list = $("tools");
+    list.replaceChildren();
+    const matches = filteredTools();
+    $("toolCount").textContent = `${matches.length} tools shown · ${T.length} calculators in the library`;
+    if (!matches.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "No tools match your search or filter.";
+      list.append(empty);
+      return;
+    }
+    matches.forEach(t => list.append(buildCard(t)));
+  }
+
+  function renderFormulas() {
+    const body = $("formulaTable");
+    body.replaceChildren();
+    commonFormulas.forEach(row => {
+      const tr = document.createElement("tr");
+      row.forEach(cell => { const td = document.createElement("td"); td.textContent = cell; tr.append(td); });
+      body.append(tr);
+    });
+  }
+
+  $("search").addEventListener("input", e => {
+    state.query = e.target.value;
+    renderTools();
+  });
+  $("favoritesOnly").onclick = () => {
+    state.favoritesOnly = !state.favoritesOnly;
+    $("favoritesOnly").textContent = state.favoritesOnly ? "★ Favorites" : "☆ Favorites";
+    renderTools();
+  };
+  $("showAll").onclick = () => {
+    state.category = "All";
+    state.query = "";
+    state.favoritesOnly = false;
+    $("search").value = "";
+    $("favoritesOnly").textContent = "☆ Favorites";
+    renderTabs();
+    renderTools();
+  };
+  $("clearHistory").onclick = () => {
+    state.history = [];
+    localStorage.removeItem("aznur-eng-history");
+    toast("Calculation history cleared.");
+  };
+
+  renderTabs();
+  renderTools();
+  renderFormulas();
+
+  // Small deterministic self-test. It does not interrupt normal usage.
+  const selfTest = [
+    ["Ohm's law", T.find(x => x.id === "ohms").calc({ V: 230, I: 5, R: 46 }).lines[0][1], 230, 1e-9],
+    ["Force", T.find(x => x.id === "newton2").calc({ m: 10, a: 2 }).main, 20, 1e-9],
+    ["Three-phase power", T.find(x => x.id === "three-phase").calc({ V: 400, I: 10, pf: 0.9 }).main, Math.sqrt(3) * 400 * 10 * 0.9 / 1000, 1e-9],
+    ["Concrete volume", T.find(x => x.id === "concrete").calc({ L: 5, W: 3, D: .15, dry: 1.54, cement: 1, sand: 2, agg: 4 }).main, 2.25, 1e-9],
+    ["Pump power", T.find(x => x.id === "pump-power").calc({ Q: 20, H: 30, rho: 1000, eta: 70 }).main, 5.88399, 0.001]
+  ];
+  window.AznurEngineeringSelfTest = () => selfTest.map(([name, got, expected, tol]) => ({ name, pass: Math.abs(got - expected) <= tol, got, expected }));
+  window.AznurEngineeringLibrary = T;
+})();
+</script>
+</body>
+</html>
